@@ -1,5 +1,6 @@
 import requests
 import re
+from datetime import datetime
 
 username = "typer_noah"
 num_races = 3400
@@ -22,14 +23,31 @@ response_text = f"{response.content}"
 cleanup = response_text.replace("\\r\\n", '\n')
 
 pattern = re.compile(r"\d+\">\d+\.\d\d")
-speeds = pattern.findall(cleanup)
+matches = pattern.findall(cleanup)
 
-for i in range(len(speeds)):
-	speeds[i] = speeds[i].split('>')[1]
+
+date_pattern = re.compile(r"20.*\n.*\d\">\d+.\d\d")
+date_matches = date_pattern.findall(cleanup)
+# print(date_matches)
+
+speeds = []
+# dates = []
+times = []
+for i in range(len(matches)):
+	speeds.append(matches[i].split('>')[1])
+
+for i in range(len(date_matches)):
+	td = date_matches[i].split('<')[0]
+	# dates.append(td)
+	times.append(datetime.strptime(td, "%Y-%m-%d %H:%M:%S").timestamp())
+
+# print(dates)
 
 with open(f"speeds-{username}.txt", 'w') as race_file:
-	for r in speeds:
-		race_file.write(r)
+	for i in range(len(speeds)):
+		race_file.write(speeds[i])
+		race_file.write(',')
+		race_file.write(str(times[i]))
 		race_file.write('\n')
 
 if write_raw:

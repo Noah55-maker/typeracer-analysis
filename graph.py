@@ -13,11 +13,15 @@ with open(file_name, "r") as speed_file:
 raw_speeds.reverse()
 
 speeds = []
+times = []
 for i in range(len(raw_speeds)):
-	parsed_speed = float(raw_speeds[i][0:-1])
-	speeds.append(parsed_speed)
+	split = raw_speeds[i][0:-1].split(',')
 
-plt.plot(speeds)
+	speeds.append(float(split[0]))
+	times.append(float(split[1]))
+
+
+plt.plot(times, speeds, 'o')
 plt.show()
 
 if len(speeds) < rolling_average_size:
